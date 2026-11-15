@@ -1,0 +1,19 @@
+// Kingston Tutoring iPhone app: the only file you need to edit before building.
+// After changing it, run ./setup.sh check (or just build in Xcode).
+
+// Your public booking site's host name, without https:// (the site the app talks to and whose
+// /b/... links open the app). Must match PUBLIC_ORIGIN in workers/public/wrangler.jsonc.
+KT_PUBLIC_HOST = tutoring.example.com
+
+// Your Apple Developer Team ID (10 characters, from developer.apple.com > Account > Membership).
+DEVELOPMENT_TEAM =
+
+// A reverse-DNS identifier you own. It can't be changed after the first App Store upload.
+KT_BUNDLE_ID = com.example.kingstontutoring
+
+// The name under the icon on the home screen. About 12 characters fit; longer names end in "…".
+KT_DISPLAY_NAME = Kingston Tutoring
+
+// Version shown on the App Store, and a build number that must go up with every upload.
+MARKETING_VERSION = 1.0
+CURRENT_PROJECT_VERSION = 1

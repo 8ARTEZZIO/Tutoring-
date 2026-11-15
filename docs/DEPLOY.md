@@ -21,7 +21,8 @@ mode** payments. Live payments stay off until you deliberately follow [Going liv
 | Terms, cancellation, early-start and privacy wording | dashboard → Settings | the defaults are a starting draft for you to review, not legal advice |
 | Real dates and call links | dashboard → listing | publishing is blocked for placeholder links (`example.com`, `.test`, …) |
 
-Optional: `BOOKINGS_PAUSED=true` (emergency pause), `STRIPE_ENV_TAG` (if two deployments share one Stripe
+Optional: `APPLE_APP_IDS` (`vars`, public config: `"<TEAM ID>.<bundle id>"` once you publish the iPhone app,
+so private links open it; see §10), `BOOKINGS_PAUSED=true` (emergency pause), `STRIPE_ENV_TAG` (if two deployments share one Stripe
 account), `STRIPE_API_VERSION` (defaults to `2025-03-31.basil`).
 
 Anything other than `ENVIRONMENT=development|test` is treated as production. Production fails closed: no
@@ -180,3 +181,12 @@ live keys outside production. To switch:
 4. `npx wrangler secret put STRIPE_SECRET_KEY` (live key) for both Workers and `STRIPE_WEBHOOK_SECRET` for the
    public Worker. Set `"STRIPE_MODE": "live"` in both configs and `npm run deploy`.
 5. Make one real low-value booking, check it end to end, then refund it from the Stripe Dashboard.
+
+## 10. The iPhone app (optional)
+
+The free companion app in `ios/` talks to the public Worker's `/api/app/v1/*` endpoints, which are deployed
+with it; there is nothing extra to switch on. To let private links open the app, set
+`"APPLE_APP_IDS": "<TEAM ID>.<bundle id>"` in `workers/public/wrangler.jsonc` (the same values as
+`ios/Config.xcconfig`) and `npm run deploy:public`. The site then serves
+`/.well-known/apple-app-site-association` for `/b/*` links. Building, testing and App Store submission are
+in [ios/README.md](../ios/README.md).

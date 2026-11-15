@@ -1,0 +1,57 @@
+# Fallback only. KingstonTutoring.xcodeproj is checked in and is what you open. If it is ever damaged
+# (or Xcode refuses to open it), rebuild it from this file:
+#   brew install xcodegen
+#   ./setup.sh regenerate
+name: KingstonTutoring
+options:
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+packages:
+  KingstonTutoringCore:
+    path: KingstonTutoringCore
+targets:
+  KingstonTutoring:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    configFiles:
+      Debug: Config.xcconfig
+      Release: Config.xcconfig
+    sources:
+      - path: App
+      - path: Support
+        buildPhase: none
+      - path: Config.xcconfig
+        buildPhase: none
+    dependencies:
+      - package: KingstonTutoringCore
+    settings:
+      base:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        CODE_SIGN_ENTITLEMENTS: Support/KingstonTutoring.entitlements
+        CODE_SIGN_STYLE: Automatic
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Support/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: $(KT_BUNDLE_ID)
+        SUPPORTS_MACCATALYST: NO
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+        SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: NO
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1"
+schemes:
+  KingstonTutoring:
+    build:
+      targets:
+        KingstonTutoring: all
+    run:
+      config: Debug
+      commandLineArguments:
+        "-KTDemo": false
+    test:
+      config: Debug
+      targets:
+        - package: KingstonTutoringCore/KingstonTutoringCoreTests
+    archive:
+      config: Release

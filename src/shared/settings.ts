@@ -47,7 +47,7 @@ Email the contact address above. Replies normally within two working days.`,
   early_start_ack_text:
     "I understand that if I cancel after a session has started I'll pay for what has been provided, and that I lose my right to cancel once the booking has been fully provided.",
 
-  privacy_version: '2026-11-15.1',
+  privacy_version: '2026-11-15.2',
   privacy_body: `## Who is responsible for your data
 The seller named above is responsible for the information collected through this booking site.
 
@@ -67,6 +67,9 @@ Stripe (payments), Cloudflare (hosting and spam protection) and the email provid
 
 ## How long it is kept
 Paid booking records are kept as long as needed for tax and accounting (normally six years). Unfinished checkouts are anonymised after {{retention_unpaid_days}} days. Waitlist and interest entries are deleted after {{retention_leads_days}} days or when you leave the list.
+
+## The iPhone app
+The app keeps a private access key for each booking you add (in the iPhone Keychain) and a copy of your class details so they work offline. Class reminders are scheduled on your phone. The app has no advertising or tracking. Removing a booking from the app deletes it from the phone and switches off that key.
 
 ## Your rights
 You can ask for a copy of your data, ask for it to be corrected or deleted, object to its use, or withdraw consent at any time by emailing the contact address. You can also complain to the Information Commissioner's Office (ico.org.uk).`,

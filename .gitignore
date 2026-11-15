@@ -11,3 +11,10 @@ test-results/
 .secrets
 *.secrets
 !*.secrets.example
+# iPhone app build outputs
+ios/build/
+ios/KingstonTutoringCore/.build/
+ios/KingstonTutoringCore/.swiftpm/
+xcuserdata/
+*.xcuserstate
+DerivedData/

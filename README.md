@@ -8,6 +8,7 @@ switch it yourself).
 |---|---|---|
 | Public site (`workers/public`) | Landing page with the booking card, weekly UK-time calendar, class pages, invite links, booking form, Stripe Checkout, private booking pages, ICS, waitlist, signed Stripe webhook, 10-minute reconciliation cron | http://localhost:8787 |
 | Tutor dashboard (`workers/admin`) | Behind Cloudflare Access (the Worker also validates the Access JWT itself): listings and dates, publishing, roster CSV, invites, offline payments, payment recheck, refunds, email templates, waitlist, settings, stats, audit log | http://localhost:8788 |
+| iPhone app (`ios/`) | Free SwiftUI companion for students who have booked: class times in UK and local time, join links, reminders, Add to Calendar, cancellation requests, offline. It sells nothing (booking and payment stay on the website). See [ios/README.md](ios/README.md) | Xcode Simulator |
 
 Everything is server-rendered HTML with one small stylesheet and a tiny optional script. No framework,
 no runtime dependencies.
@@ -72,6 +73,8 @@ responses after creating a session, to simulate a lost response.
 | GMT/BST boundary and a rescheduled date | `test/acceptance/timezones.test.ts` | Pass |
 | Phone, keyboard, full group and no upcoming dates | `test/browser/phone.test.ts` (Chromium) | Pass |
 | Operator rehearsal: publish rules, clashes, offline payment, waitlist, pause, requests, terms versions, rate limits | `test/acceptance/operator.test.ts` | Pass |
+| iPhone app API: links, refresh, revoke, cancellation requests, malformed input, rate limits, App Review demo, universal links, app view of policy pages | `test/acceptance/app-api.test.ts` | Pass |
+| iPhone app logic: links, API client, offline, in-flight changes, reminders, time zones, demo server (47 tests) | `ios/KingstonTutoringCore` (`cd ios && ./setup.sh test`) | Pass |
 
 What the automated tests do **not** cover, and you must do once with your own accounts: a real Stripe
 test-mode payment through Stripe's hosted page with the Stripe CLI forwarding webhooks, Cloudflare Access on
@@ -99,8 +102,11 @@ the deployed dashboard hostname, and a nine-person call on your video service (s
 - [docs/DEPLOY.md](docs/DEPLOY.md): settings you must supply, exact deploy commands, Cloudflare Access,
   Turnstile, Stripe webhooks, the real Stripe test payment, going live, and costs and quotas.
 - [docs/RUNBOOK.md](docs/RUNBOOK.md): day-to-day operation: publish a group, share links, run a class from the
-  roster, change dates, cancel, refund, reconcile a payment, recover a private link, pause bookings and
-  check costs.
+  roster, change dates, cancel, refund, reconcile a payment, recover a private link, pause bookings, data
+  requests and check costs.
+- [ios/README.md](ios/README.md): build and run the iPhone app, and
+  [ios/AppStore/submission-checklist.md](ios/AppStore/submission-checklist.md) to publish it (listing text,
+  review notes, privacy answers, screenshots).
 
 ## Layout
 
@@ -110,6 +116,7 @@ src/public/     public Worker (routes + pages + webhook + cron)
 src/admin/      dashboard Worker (Access JWT auth, CSRF, pages)
 migrations/     D1 schema (applied with wrangler)
 workers/*/      wrangler.jsonc per Worker, .dev.vars / .secrets examples
-scripts/        dev runner, local seed/reset, admin lockdown check, test bundler
+scripts/        dev runner, local seed/reset, admin lockdown check, test bundler, app icon renderer
 test/           unit, acceptance (Miniflare) and browser (Playwright) tests
+ios/            iPhone app: Xcode project, SwiftUI screens, tested Swift core package, App Store kit
 ```

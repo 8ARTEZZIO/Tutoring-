@@ -183,6 +183,8 @@ export interface LayoutOptions {
   noindex?: boolean;
   sticky?: SafeHtml | null;
   bannerHtml?: SafeHtml | null;
+  /** Opened from the iPhone app: no site navigation and no links towards booking or payment. */
+  appView?: boolean;
 }
 
 export function publicLayout(opts: LayoutOptions): SafeHtml {
@@ -206,12 +208,16 @@ ${opts.turnstile && opts.cfg.turnstile.siteKey ? html`<script src="https://chall
 <a class="skip" href="#main">Skip to content</a>
 <header class="site on-dark">
   <div class="wrap">
-    <a class="brand" href="/">Kingston <span>Tutoring</span></a>
+    ${
+      opts.appView
+        ? html`<span class="brand">Kingston <span>Tutoring</span></span>`
+        : html`<a class="brand" href="/">Kingston <span>Tutoring</span></a>
     <nav class="site-nav" aria-label="Main">
       <a href="/calendar">Calendar</a>
       <a href="/#faq">FAQ</a>
       <a href="/booking">My booking</a>
-    </nav>
+    </nav>`
+    }
   </div>
 </header>
 ${opts.bannerHtml ?? ''}
@@ -226,12 +232,21 @@ ${opts.body}
       <p class="small">${seller ? html`Run by ${seller}${s.seller_address.trim() ? html`, ${s.seller_address.trim()}` : ''}.` : 'Seller details are being finalised.'}
       ${email ? html` Contact: <a href="mailto:${email}">${email}</a>` : ''}</p>
     </div>
-    <ul class="foot-links">
+    ${
+      opts.appView
+        ? html`<ul class="foot-links">
+      <li><a href="/terms?view=app">Booking terms</a></li>
+      <li><a href="/privacy?view=app">Privacy</a></li>
+      <li><a href="/support?view=app">Support</a></li>
+    </ul>`
+        : html`<ul class="foot-links">
       <li><a href="/terms">Booking terms</a></li>
       <li><a href="/privacy">Privacy</a></li>
       <li><a href="/calendar">Calendar</a></li>
       <li><a href="/booking/recover">Lost your booking link?</a></li>
-    </ul>
+      <li><a href="/support">Support</a></li>
+    </ul>`
+    }
   </div>
 </footer>
 ${opts.sticky ?? ''}

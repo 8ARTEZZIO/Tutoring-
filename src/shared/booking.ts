@@ -62,7 +62,7 @@ export interface ClaimInput {
   status: 'hold' | 'confirmed';
   paymentReference?: string | null;
   amountPaidPence?: number | null;
-  /** Operator registrations may add to closed listings and ignore the online cutoff. */
+  /** Operator registrations may add to draft or closed listings and ignore the online cutoff. */
   operatorOverride?: boolean;
 }
 
@@ -77,7 +77,7 @@ export async function claimSeat(
   const attemptId = input.status === 'hold' ? randomId('att', 20) : null;
   // Online bookings also honour the dashboard pause switch inside the same atomic statement.
   const statusClause = input.operatorOverride
-    ? `l.status IN ('published','closed') AND l.last_ends_at > ?16`
+    ? `l.status IN ('draft','published','closed') AND l.last_ends_at > ?16`
     : `l.status = 'published' AND l.bookings_close_at IS NOT NULL AND l.bookings_close_at > ?16
        AND NOT EXISTS (SELECT 1 FROM settings s WHERE s.key = 'bookings_paused' AND s.value = '1')`;
   const sql = `
@@ -130,7 +130,7 @@ export async function claimSeat(
   const listing = await getListing(db, input.listingId);
   if (!listing) return { ok: false, reason: 'not_found' };
   const statusOk = input.operatorOverride
-    ? listing.status === 'published' || listing.status === 'closed'
+    ? listing.status !== 'cancelled'
     : listing.status === 'published';
   if (!statusOk) return { ok: false, reason: 'not_bookable' };
   if (!input.operatorOverride) {

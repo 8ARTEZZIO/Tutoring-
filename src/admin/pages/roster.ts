@@ -125,7 +125,7 @@ export async function handleManualBooking(ctx: AdminCtx, listing: ListingRow): P
     const reasons: Record<string, string> = {
       sold_out: 'No seats left (holds and confirmed bookings fill the capacity).',
       duplicate: 'That email already has an active booking for this listing.',
-      not_bookable: 'This listing is not published or closed.',
+      not_bookable: 'This listing is cancelled.',
       cutoff: 'Bookings are closed.',
       not_found: 'Listing not found.',
     };

@@ -32,6 +32,8 @@ export interface Env {
   DEV_ADMIN_EMAIL?: string;
   /** Emergency switch: "true" pauses all new bookings regardless of the dashboard setting. */
   BOOKINGS_PAUSED?: string;
+  /** iPhone app identifiers for universal links, e.g. "ABCDE12345.uk.example.kingstontutoring" (comma-separated). */
+  APPLE_APP_IDS?: string;
 }
 
 export type EnvName = 'production' | 'development' | 'test';

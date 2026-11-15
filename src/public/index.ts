@@ -9,7 +9,7 @@ import { handleCancelled, handleRelease, handleResume, handleReturn } from './pa
 import { renderHome } from './pages/home';
 import { handleInvite } from './pages/invite';
 import { renderListing } from './pages/listing';
-import { asset, errorPage, notFoundPage, renderPrivacy, renderTerms, robotsTxt } from './pages/misc';
+import { asset, errorPage, notFoundPage, renderPrivacy, renderSupport, renderTerms, robotsTxt } from './pages/misc';
 import {
   handleCancelRequest,
   handleForget,
@@ -22,6 +22,7 @@ import {
   renderRecover,
 } from './pages/private';
 import { handleLeave, handleWaitlistPost, renderLeave, renderWaitlist } from './pages/waitlist';
+import { apiBookings, apiCancelRequest, apiConfig, apiForget, apiLink, appleAppSiteAssociation } from './api';
 import { handleStripeWebhook } from './webhook';
 
 const router = new Router<Ctx>()
@@ -55,6 +56,13 @@ const router = new Router<Ctx>()
   .get('/assets/app.js', (ctx) => asset(ctx, 'js'))
   .get('/favicon.svg', (ctx) => asset(ctx, 'favicon'))
   .post('/webhooks/stripe', handleStripeWebhook)
+  .post('/api/app/v1/link', apiLink)
+  .post('/api/app/v1/bookings', apiBookings)
+  .post('/api/app/v1/cancel-request', apiCancelRequest)
+  .post('/api/app/v1/forget', apiForget)
+  .get('/api/app/v1/config', apiConfig)
+  .get('/.well-known/apple-app-site-association', (ctx) => appleAppSiteAssociation(ctx.env.APPLE_APP_IDS))
+  .get('/support', renderSupport)
   .get('/healthz', (ctx) => jsonResponse({ ok: true, configured: ctx.cfg.problems.length === 0 }));
 
 function publicCsp(cfg: AppConfig): string {

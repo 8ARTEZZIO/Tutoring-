@@ -32,7 +32,9 @@
     "ADMIN_ORIGIN": "https://kingston-tutoring-admin.YOUR-SUBDOMAIN.workers.dev",
     // Keep "test" until you deliberately switch to live payments (see docs/DEPLOY.md, "Going live").
     "STRIPE_MODE": "test",
-    "TURNSTILE_SITE_KEY": ""
+    "TURNSTILE_SITE_KEY": "",
+    // iPhone app identifier(s) for universal links: "<TEAM ID>.<bundle id>", e.g. "ABCDE12345.uk.example.kingstontutoring".
+    "APPLE_APP_IDS": ""
   },
   "secrets": {
     "required": ["APP_SECRET", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET", "TURNSTILE_SECRET_KEY"]

@@ -98,6 +98,26 @@ everyone, including a copyable BCC list of weekly-question opt-ins, per-entry de
 leads…** which applies the retention plan (deletes old leads, anonymises old unpaid attempts, keeps paid
 bookings for accounting).
 
+## The iPhone app
+
+Students can add their booking to the free iPhone app (see [ios/README.md](../ios/README.md)) by opening
+their private link on an iPhone or pasting it into the app. Nothing changes for you: the app shows the same
+dates, links and status as the private booking page, and picks up date changes when the student opens it.
+Cancellation requests from the app arrive like the ones from the website. **Revoke all private links** on a
+booking also signs every app out of it. Keep the hidden `App Review demo` listing (see
+[ios/AppStore/review-notes.md](../ios/AppStore/review-notes.md)) for future app updates.
+
+## Data requests
+
+Students can ask to see or delete their data (by email, or from the app's **Ask for your data to be
+deleted**). Reply within one month. Find their entries in the roster of each group they booked (or search
+the roster CSV export), on **Waitlist** and under **Private link requests**, then:
+
+- **Delete**: remove their waitlist and interest entries (per-entry delete), and on each booking use
+  **Revoke all private links**, which also signs any iPhone app out. Paid booking records are kept for tax and
+  accounting, as the privacy notice says (normally six years); say so in your reply.
+- **Access**: send them what the dashboard holds about them (booking details, dates, payments, requests).
+
 ## Wording and settings
 
 Settings holds seller details, terms, cancellation summary, early-start wording, privacy notice, retention
