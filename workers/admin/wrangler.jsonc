@@ -1,0 +1,35 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  // Tutor dashboard Worker. Must sit behind Cloudflare Access; it also validates the Access JWT itself.
+  "name": "kingston-tutoring-admin",
+  "main": "../../src/admin/index.ts",
+  "compatibility_date": "2026-08-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "redact_query_string": true,
+    "logs": { "enabled": true, "invocation_logs": false }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "kingston-tutoring",
+      "database_id": "00000000-0000-4000-8000-000000000000",
+      "migrations_dir": "../../migrations"
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "PUBLIC_ORIGIN": "https://kingston-tutoring.YOUR-SUBDOMAIN.workers.dev",
+    "ADMIN_ORIGIN": "https://kingston-tutoring-admin.YOUR-SUBDOMAIN.workers.dev",
+    "STRIPE_MODE": "test",
+    // e.g. https://your-team.cloudflareaccess.com
+    "ACCESS_TEAM_DOMAIN": "",
+    // Application Audience (AUD) tag from Zero Trust > Access > Applications.
+    "ACCESS_AUD": ""
+  },
+  "secrets": {
+    "required": ["APP_SECRET", "STRIPE_SECRET_KEY", "ADMIN_EMAILS"]
+  }
+}

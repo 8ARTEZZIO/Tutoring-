@@ -1,0 +1,40 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  // Student-facing Worker: landing page, calendar, booking, Stripe webhook, private booking pages.
+  "name": "kingston-tutoring",
+  "main": "../../src/public/index.ts",
+  "compatibility_date": "2026-08-01",
+  "workers_dev": true,
+  // No <version>-<name>.workers.dev preview hosts.
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "redact_query_string": true,
+    // Per-request invocation logs would record /b/<token> and /i/<token> paths. The app writes its own
+    // structured logs without tokens or emails instead.
+    "logs": { "enabled": true, "invocation_logs": false }
+  },
+  // Reconcile stale checkouts with Stripe every 10 minutes.
+  "triggers": { "crons": ["*/10 * * * *"] },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "kingston-tutoring",
+      // Replace with the id printed by `npx wrangler d1 create kingston-tutoring` (same id in both Worker configs).
+      "database_id": "00000000-0000-4000-8000-000000000000",
+      "migrations_dir": "../../migrations"
+    }
+  ],
+  "vars": {
+    // Anything other than "development"/"test" is treated as production (fail-closed).
+    "ENVIRONMENT": "production",
+    "PUBLIC_ORIGIN": "https://kingston-tutoring.YOUR-SUBDOMAIN.workers.dev",
+    "ADMIN_ORIGIN": "https://kingston-tutoring-admin.YOUR-SUBDOMAIN.workers.dev",
+    // Keep "test" until you deliberately switch to live payments (see docs/DEPLOY.md, "Going live").
+    "STRIPE_MODE": "test",
+    "TURNSTILE_SITE_KEY": ""
+  },
+  "secrets": {
+    "required": ["APP_SECRET", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET", "TURNSTILE_SECRET_KEY"]
+  }
+}

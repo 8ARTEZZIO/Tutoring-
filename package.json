@@ -1,0 +1,37 @@
+{
+  "name": "kingston-tutoring",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Independent peer tutoring booking pilot: public booking Worker + tutor dashboard Worker on Cloudflare with D1 and Stripe Checkout.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build:test": "node scripts/build-test-bundles.mjs",
+    "test": "npm run typecheck && npm run build:test && vitest run",
+    "test:unit": "vitest run test/unit",
+    "test:acceptance": "npm run build:test && vitest run test/acceptance",
+    "test:browser": "npm run build:test && node test/browser/run-browser-checks.mjs",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local --persist-to .wrangler/state -c workers/public/wrangler.jsonc",
+    "db:seed:local": "node scripts/seed-local.mjs",
+    "db:reset:local": "node scripts/reset-local.mjs",
+    "dev": "node scripts/dev.mjs",
+    "dev:public": "wrangler dev -c workers/public/wrangler.jsonc --persist-to .wrangler/state --port 8787",
+    "dev:admin": "wrangler dev -c workers/admin/wrangler.jsonc --persist-to .wrangler/state --port 8788",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote -c workers/public/wrangler.jsonc",
+    "deploy:public": "wrangler deploy -c workers/public/wrangler.jsonc",
+    "deploy:admin": "wrangler deploy -c workers/admin/wrangler.jsonc",
+    "deploy": "npm run db:migrate:remote && npm run deploy:public && npm run deploy:admin",
+    "check:admin-lockdown": "node scripts/check-admin-lockdown.mjs"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20261110.1",
+    "esbuild": "0.28.2",
+    "miniflare": "4.20260730.0",
+    "typescript": "5.9.3",
+    "vitest": "3.2.7",
+    "wrangler": "4.157.0"
+  }
+}
