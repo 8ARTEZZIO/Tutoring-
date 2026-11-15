@@ -19,6 +19,7 @@
     "db:reset:local": "node scripts/reset-local.mjs",
     "dev": "node scripts/dev.mjs",
     "dev:public": "wrangler dev -c workers/public/wrangler.jsonc --persist-to .wrangler/state --port 8787",
+    "demo": "node scripts/demo.mjs",
     "db:migrate:remote": "wrangler d1 migrations apply DB --remote -c workers/public/wrangler.jsonc",
     "deploy:public": "wrangler deploy -c workers/public/wrangler.jsonc",
     "deploy:admin": "wrangler deploy -c workers/admin/wrangler.jsonc",

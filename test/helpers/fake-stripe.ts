@@ -276,27 +276,41 @@ export class FakeStripe {
   server: http.Server | null = null;
   onPaid: ((session: FakeSession) => Promise<void>) | null = null;
 
+  /** Serves the stand-in hosted Checkout page for `/c/pay/<session id>`; returns false for other paths. */
+  async serveCheckout(
+    req: http.IncomingMessage,
+    res: http.ServerResponse,
+    pathname: string,
+    rewriteUrl: (url: string) => string = (u) => u,
+  ): Promise<boolean> {
+    const m = /^\/c\/pay\/([^/]+)$/.exec(pathname);
+    if (!m) return false;
+    const s = this.sessions.get(m[1]!);
+    if (s) this.lazyExpire(s);
+    if (!s || s.status !== 'open') {
+      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }).end(s ? `This checkout is ${s.status}.` : 'Not found');
+      return true;
+    }
+    if (req.method === 'POST') {
+      this.pay(s.id);
+      await this.onPaid?.(s);
+      res.writeHead(303, { Location: rewriteUrl(s.success_url.replace('{CHECKOUT_SESSION_ID}', s.id)) }).end();
+      return true;
+    }
+    const esc = (v: unknown) => String(v ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+    const name = s.line_items[0]?.price_data?.product_data?.name ?? '';
+    const desc = s.line_items[0]?.price_data?.product_data?.description ?? '';
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }).end(`<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Test Checkout</title>
+<style>body{font:16px system-ui;margin:0;background:#f6f9fc;color:#1a1f36}main{max-width:420px;margin:0 auto;padding:24px 16px}.box{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 10px #0001}button{width:100%;min-height:48px;background:#635bff;color:#fff;border:0;border-radius:8px;font:600 16px system-ui}.muted{color:#697386;font-size:14px}</style></head>
+<body><main><p class="muted">TEST MODE · local Stripe emulator</p><div class="box"><h1 style="font-size:20px">${esc(name)}</h1><p class="muted">${esc(desc)}</p><p style="font-size:28px;font-weight:700">£${(s.amount_total / 100).toFixed(2)}</p>
+<p class="muted">${esc(s.custom_text?.submit?.message)}</p><p class="muted">Email: ${esc(s.customer_email)}</p><form method="post"><button type="submit">Book</button></form><p><a href="${esc(rewriteUrl(s.cancel_url))}">Back</a></p></div></main></body></html>`);
+    return true;
+  }
+
   async listen(): Promise<string> {
     this.server = http.createServer(async (req, res) => {
       const url = new URL(req.url ?? '/', 'http://x');
-      const m = /^\/c\/pay\/([^/]+)$/.exec(url.pathname);
-      const s = m ? this.sessions.get(m[1]!) : undefined;
-      if (!s) {
-        res.writeHead(404).end('Not found');
-        return;
-      }
-      if (req.method === 'POST') {
-        this.pay(s.id);
-        await this.onPaid?.(s);
-        res.writeHead(303, { Location: s.success_url.replace('{CHECKOUT_SESSION_ID}', s.id) }).end();
-        return;
-      }
-      const name = s.line_items[0]?.price_data?.product_data?.name ?? '';
-      const desc = s.line_items[0]?.price_data?.product_data?.description ?? '';
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }).end(`<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Test Checkout</title>
-<style>body{font:16px system-ui;margin:0;background:#f6f9fc;color:#1a1f36}main{max-width:420px;margin:0 auto;padding:24px 16px}.box{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 10px #0001}button{width:100%;min-height:48px;background:#635bff;color:#fff;border:0;border-radius:8px;font:600 16px system-ui}.muted{color:#697386;font-size:14px}</style></head>
-<body><main><p class="muted">TEST MODE · local Stripe emulator</p><div class="box"><h1 style="font-size:20px">${name}</h1><p class="muted">${desc}</p><p style="font-size:28px;font-weight:700">£${(s.amount_total / 100).toFixed(2)}</p>
-<p class="muted">${s.custom_text?.submit?.message ?? ''}</p><form method="post"><button type="submit">Book</button></form><p><a href="${s.cancel_url}">Back</a></p></div></main></body></html>`);
+      if (!(await this.serveCheckout(req, res, url.pathname))) res.writeHead(404).end('Not found');
     });
     await new Promise<void>((resolve) => this.server!.listen(0, '127.0.0.1', resolve));
     const address = this.server.address() as { port: number };

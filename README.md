@@ -35,6 +35,17 @@ Without a key, pages work and booking shows "temporarily unavailable" (nothing i
 
 Reset local data at any time with `npm run db:reset:local` (stop `npm run dev` first).
 
+### Clickable demo (no accounts or keys)
+
+```bash
+npm run demo     # site :8787, dashboard :8788, fictional data in memory
+```
+
+Runs the real Workers with fictional classes and students, plus a stand-in Stripe Checkout page: press
+**Book** there to simulate a successful card payment and the confirmation flow runs exactly as in production
+(signed webhook, verification, private booking page). The demo dashboard has an open mock identity, so it is
+for local demos only and is never deployed.
+
 ## Tests
 
 ```bash
