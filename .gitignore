@@ -7,3 +7,7 @@ node_modules/
 test-results/
 *.log
 .DS_Store
+# Production secrets files used for the first deploy (never commit)
+.secrets
+*.secrets
+!*.secrets.example

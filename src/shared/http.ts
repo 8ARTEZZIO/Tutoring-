@@ -96,12 +96,17 @@ export interface ResponseOptions {
   private?: boolean;
 }
 
-export function privateHeaders(): Record<string, string> {
+/**
+ * Private responses: never cached or indexed, and never leak a Referer to another site.
+ * 'same-origin' (not 'no-referrer') because browsers send `Origin: null` on form POSTs from pages with
+ * 'no-referrer', which would defeat the same-origin check on our own forms.
+ */
+export function privateHeaders(referrerPolicy: 'same-origin' | 'no-referrer' = 'same-origin'): Record<string, string> {
   return {
     'Cache-Control': 'no-store, private, max-age=0',
     Pragma: 'no-cache',
     'X-Robots-Tag': 'noindex, nofollow, noarchive',
-    'Referrer-Policy': 'no-referrer',
+    'Referrer-Policy': referrerPolicy,
   };
 }
 
@@ -158,9 +163,9 @@ export function applySecurityHeaders(response: Response, csp: string, extra: str
  */
 export function isSameOrigin(req: Request, expectedOrigin: string): boolean {
   const origin = req.headers.get('Origin');
-  if (origin) return origin === expectedOrigin;
-  const site = req.headers.get('Sec-Fetch-Site');
-  return site === 'same-origin';
+  if (origin && origin !== 'null') return origin === expectedOrigin;
+  // Missing or opaque ("null") Origin: trust only the browser-controlled Sec-Fetch-Site header.
+  return req.headers.get('Sec-Fetch-Site') === 'same-origin';
 }
 
 export function clientIp(req: Request): string {

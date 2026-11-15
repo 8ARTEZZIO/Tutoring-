@@ -37,7 +37,8 @@ export async function handleLinkExchange(ctx: Ctx, token: string): Promise<Respo
   }
   await ctx.db.prepare('UPDATE access_tokens SET last_used_at = ? WHERE token_hash = ?').bind(ctx.now, row.token_hash).run();
   ctx.setCookies.push(accessCookie(ctx.cfg, [token, ...readCookieTokens(ctx.cookies, ctx.cfg)]));
-  return redirect(`/booking/${row.booking_id}`, { private: true });
+  // The request URL carried the bearer token: make sure nothing ever sends it on as a Referer.
+  return redirect(`/booking/${row.booking_id}`, { private: true, headers: { 'Referrer-Policy': 'no-referrer' } });
 }
 
 function statusBlock(b: BookingRow, listing: ListingRow, welcome: boolean): SafeHtml {

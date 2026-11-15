@@ -161,7 +161,7 @@ describe('entry routes', () => {
     expect(html).toContain('https://meet.example.com/pilot-loops-1');
     expect(page.headers.get('Cache-Control')).toContain('no-store');
     expect(page.headers.get('X-Robots-Tag')).toContain('noindex');
-    expect(page.headers.get('Referrer-Policy')).toBe('no-referrer');
+    expect(page.headers.get('Referrer-Policy')).toBe('same-origin');
     const ics = await otherDevice.get(`/booking/${bookingId}/calendar.ics`);
     expect(ics.status).toBe(200);
     expect(ics.headers.get('Cache-Control')).toContain('no-store');

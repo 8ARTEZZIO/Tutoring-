@@ -68,5 +68,5 @@ export async function handleInvite(ctx: Ctx, token: string): Promise<Response> {
     }),
   );
   const target = listing ? `/?g=${encodeURIComponent(listing.slug)}` : '/';
-  return redirect(target, { private: true });
+  return redirect(target, { private: true, headers: { 'Referrer-Policy': 'no-referrer' } });
 }

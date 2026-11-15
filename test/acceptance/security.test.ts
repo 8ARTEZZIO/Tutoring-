@@ -172,6 +172,10 @@ describe('security', () => {
     const nonce = /name="nonce" value="([^"]+)"/.exec(html)![1]!;
     const fields = { first_name: 'X', email: 'xsite@example.com', terms: '1', nonce, ref: 'direct', 'cf-turnstile-response': 'pass' };
     expect((await student.post(`/session/${listing.slug}/book`, fields, { origin: 'https://evil.example' })).status).toBe(403);
+    // Browsers may send an opaque "null" Origin; only the browser-controlled Sec-Fetch-Site can vouch for it.
+    expect((await student.post(`/session/${listing.slug}/book`, fields, { origin: 'null' })).status).toBe(403);
+    expect((await student.post(`/session/${listing.slug}/book`, fields, { origin: 'null', headers: { 'Sec-Fetch-Site': 'cross-site' } })).status).toBe(403);
+    expect((await student.post(`/session/${listing.slug}/book`, fields, { origin: null, headers: { 'Sec-Fetch-Site': 'cross-site' } })).status).toBe(403);
     const noCaptcha = await student.post(`/session/${listing.slug}/book`, { ...fields, 'cf-turnstile-response': 'fail' });
     expect(noCaptcha.status).toBe(422);
     expect(await pageText(noCaptcha)).toContain('I am human');

@@ -87,6 +87,7 @@ h3{font-size:1.2rem;margin:0 0 8px}
 .steps li::before{counter-increment:step;content:counter(step);display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--navy);color:var(--lime);font-weight:800;margin-bottom:8px}
 .steps strong{display:block;font-size:1.1rem}
 .two-col{display:grid;gap:20px}
+.hero-grid>*,.two-col>*,.steps>li{min-width:0}
 @media (min-width:900px){.two-col{grid-template-columns:1fr 1fr;align-items:start}}
 .code-card{background:#0e223f;color:#e9eefa;border-radius:var(--radius);padding:16px 18px;font-family:var(--mono);font-size:.95rem;line-height:1.6;overflow-x:auto;margin:0}
 .code-card .c{color:#9fb3d4}.code-card .k{color:var(--lime)}.code-card .n{color:#ffd27a}
